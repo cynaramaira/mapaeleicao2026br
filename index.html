@@ -1,0 +1,2580 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Resultado Eleições Presidenciais 2026 - Comparativo 2ºT vs 1ºT | Jamildo.com</title>
+  <meta name="description" content="Infográfico interativo com o resultado da eleição presidencial 2026 por município brasileiro, comparando o 2º turno e o 1º turno com dados do TSE.">
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Synchronous zero-CORS data & map scripts -->
+  <script src="dados.js"></script>
+  <script src="mapa_svg.js"></script>
+
+  <style>
+    :root {
+      /* Jamildo Brand Colors */
+      --color-lula: #f83d03;
+      --color-lula-hover: #e03200;
+      --color-lula-dark: #b82800;
+      --color-lula-light: #ff7547;
+      --color-lula-soft: rgba(248, 61, 3, 0.18);
+      --color-lula-text: #ff6238;
+
+      --color-flavio: #024796;
+      --color-flavio-hover: #013572;
+      --color-flavio-dark: #00224d;
+      --color-flavio-light: #3275c9;
+      --color-flavio-soft: rgba(2, 71, 150, 0.25);
+      --color-flavio-text: #60a5fa; /* High-contrast luminous blue for dark backgrounds */
+      --color-flavio-accent: #38bdf8;
+
+      --color-neutral: #94a3b8;
+      --color-outros: #10b981;
+
+      /* Dark Theme (Default) */
+      --bg-base: #060b14;
+      --bg-card: #0d1527;
+      --bg-card-hover: #162038;
+      --bg-input: #101a30;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.16);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-sub: #64748b;
+      --map-bg: transparent;
+      --map-path-stroke: rgba(0, 0, 0, 0.45);
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+      --tooltip-bg: rgba(13, 21, 39, 0.96);
+    }
+
+    [data-theme="light"] {
+      --bg-base: #f8fafc;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f1f5f9;
+      --bg-input: #ffffff;
+      --border: rgba(0, 0, 0, 0.08);
+      --border-strong: rgba(0, 0, 0, 0.16);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-sub: #64748b;
+      --map-bg: transparent;
+      --map-path-stroke: rgba(255, 255, 255, 0.65);
+      --color-flavio-text: #024796;
+      --color-lula-text: #d62f00;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+      --tooltip-bg: rgba(255, 255, 255, 0.98);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      width: 100%;
+      height: 728px;
+      max-height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Brand & Controls Header */
+    header.app-header {
+      height: 56px;
+      min-height: 56px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      gap: 12px;
+      z-index: 50;
+      position: relative;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .brand-logo-link {
+      display: inline-flex;
+      align-items: center;
+      text-decoration: none;
+    }
+
+    .brand-logo {
+      height: 28px;
+      width: auto;
+      object-fit: contain;
+      transition: opacity 0.2s ease;
+    }
+
+    .brand-logo:hover {
+      opacity: 0.85;
+    }
+
+    .header-divider {
+      width: 1px;
+      height: 22px;
+      background: var(--border-strong);
+    }
+
+    .header-title-box h1 {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+      line-height: 1.2;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-2026 {
+      font-size: 10px;
+      font-weight: 700;
+      background: var(--color-lula-soft);
+      color: var(--color-lula-text);
+      padding: 1px 6px;
+      border-radius: 4px;
+      border: 1px solid rgba(248, 61, 3, 0.35);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .header-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Search Component */
+    .search-wrapper {
+      position: relative;
+      flex: 1;
+      max-width: 300px;
+    }
+
+    .search-input-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      width: 14px;
+      height: 14px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      height: 32px;
+      padding: 0 28px 0 32px;
+      border-radius: 8px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      font-size: 12px;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--color-lula);
+      box-shadow: 0 0 0 3px var(--color-lula-soft);
+    }
+
+    .search-clear-btn {
+      position: absolute;
+      right: 8px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 14px;
+      display: none;
+    }
+
+    .search-results-dropdown {
+      position: absolute;
+      top: 38px;
+      left: 0;
+      right: 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      max-height: 260px;
+      overflow-y: auto;
+      z-index: 100;
+      display: none;
+    }
+
+    .search-item {
+      padding: 8px 12px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      transition: background 0.15s ease;
+    }
+
+    .search-item:last-child {
+      border-bottom: none;
+    }
+
+    .search-item:hover, .search-item.active {
+      background: var(--bg-card-hover);
+    }
+
+    .search-item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .search-item-name {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .search-item-uf {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .search-item-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    .search-item-badge.lula {
+      background: #f83d03;
+      color: #ffffff;
+      border: 1px solid #ff7a59;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+    }
+
+    .search-item-badge.flavio {
+      background: #024796;
+      color: #ffffff;
+      border: 1px solid #60a5fa;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+    }
+
+    /* Actions / Theme Toggle */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 14px;
+    }
+
+    .icon-btn:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-strong);
+    }
+
+    /* Sub-header Controls Bar */
+    .controls-bar {
+      height: 44px;
+      min-height: 44px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      gap: 10px;
+      z-index: 40;
+      overflow-x: auto;
+    }
+
+    .mode-pills-group {
+      display: flex;
+      align-items: center;
+      background: var(--bg-input);
+      padding: 3px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      gap: 2px;
+    }
+
+    .mode-pill {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .mode-pill:hover {
+      color: var(--text-main);
+    }
+
+    .mode-pill.active {
+      background: var(--bg-card);
+      color: var(--text-main);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+      border: 1px solid var(--border);
+    }
+
+    .mode-pill.active[data-mode="2t"] {
+      border-left: 3px solid var(--color-lula);
+    }
+
+    .mode-pill.active[data-mode="1t"] {
+      border-left: 3px solid var(--color-flavio-text);
+    }
+
+    .mode-pill.active[data-mode="flips"] {
+      border-left: 3px solid #f59e0b;
+      color: #f59e0b;
+    }
+
+    .mode-pill.active[data-mode="swing"] {
+      border-left: 3px solid #a855f7;
+      color: #a855f7;
+    }
+
+    .filter-pills-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .region-select-wrap select, .uf-select-wrap select {
+      height: 28px;
+      padding: 0 8px;
+      border-radius: 6px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      font-size: 11px;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .region-select-wrap select:focus, .uf-select-wrap select:focus {
+      border-color: var(--color-lula);
+    }
+
+    /* Main Container Split Layout */
+    main.app-main {
+      flex: 1;
+      height: calc(728px - 100px - 26px);
+      display: flex;
+      position: relative;
+      overflow: hidden;
+      background: var(--bg-base);
+    }
+
+    /* Map Viewport Area */
+    .map-viewport {
+      flex: 1;
+      height: 100%;
+      position: relative;
+      background: transparent;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .svg-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      background: transparent;
+    }
+
+    .svg-container:active {
+      cursor: grabbing;
+    }
+
+    .svg-container svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: transparent;
+    }
+
+    /* SVG Map Path Styling */
+    .svg-container path {
+      stroke: var(--map-path-stroke) !important;
+      stroke-width: 0.15px !important;
+      transition: fill 0.25s ease, opacity 0.2s ease, stroke-width 0.15s ease;
+      cursor: pointer;
+    }
+
+    .svg-container path:hover {
+      stroke: #ffffff !important;
+      stroke-width: 1px !important;
+      filter: brightness(1.25);
+    }
+
+    .svg-container path.active-selected {
+      stroke: #f59e0b !important;
+      stroke-width: 1.5px !important;
+      filter: brightness(1.35) drop-shadow(0 0 5px rgba(245, 158, 11, 0.9));
+    }
+
+    /* State border overlays (suffixed with -1, -3, etc., or in layer1) */
+    #layer1,
+    #layer1 path,
+    .svg-container path[id*="-border"],
+    .svg-container path[id$="-1"],
+    .svg-container path[id$="-2"],
+    .svg-container path[id$="-3"],
+    .svg-container path[id$="-5"],
+    .svg-container path[id$="-6"],
+    .svg-container path[id$="-7"],
+    .svg-container path[id$="-8"],
+    .svg-container path[id$="-9"],
+    .svg-container path[id$="-0"] {
+      pointer-events: none !important;
+      stroke: rgba(255, 255, 255, 0.45) !important;
+      stroke-width: 0.45px !important;
+      fill: none !important;
+    }
+
+    /* Map Floating Controls */
+    .map-zoom-controls {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      z-index: 30;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3px;
+      box-shadow: var(--shadow);
+    }
+
+    .zoom-btn {
+      width: 26px;
+      height: 26px;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+
+    .zoom-btn:hover {
+      background: var(--bg-card-hover);
+      color: var(--color-lula-text);
+    }
+
+    /* Map Legend Overlay */
+    .map-legend-overlay {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 12px;
+      box-shadow: var(--shadow);
+      z-index: 30;
+      max-width: 230px;
+      backdrop-filter: blur(8px);
+    }
+
+    .legend-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
+
+    .legend-items {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .legend-swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      flex-shrink: 0;
+    }
+
+    .legend-scale-bar {
+      display: flex;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 4px;
+      margin-bottom: 2px;
+    }
+
+    .legend-scale-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      color: var(--text-muted);
+    }
+
+    /* Floating Tooltip */
+    .map-tooltip {
+      position: absolute;
+      pointer-events: none;
+      background: var(--tooltip-bg);
+      border: 1px solid var(--border-strong);
+      border-radius: 8px;
+      padding: 10px 14px;
+      box-shadow: var(--shadow);
+      color: var(--text-main);
+      font-size: 12px;
+      z-index: 1000;
+      display: none;
+      transform: translate(-50%, -115%);
+      min-width: 190px;
+      backdrop-filter: blur(10px);
+    }
+
+    .tooltip-city {
+      font-weight: 800;
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .tooltip-uf {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .tooltip-winner-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    .tooltip-data-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .tooltip-delta {
+      font-size: 11px;
+      margin-top: 6px;
+      padding-top: 5px;
+      border-top: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    /* Right Side Panel / Intelligence Drawer */
+    aside.side-panel {
+      width: 370px;
+      min-width: 370px;
+      height: 100%;
+      background: var(--bg-card);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      z-index: 35;
+      position: relative;
+    }
+
+    .panel-content {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+    }
+
+    /* Stacked Cards Layout - strictly vertical */
+    .overview-box {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    /* Scoreboard Card */
+    .scoreboard-card {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .scoreboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .scoreboard-scope {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .scoreboard-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--bg-card);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    /* Candidate Comparison Grid */
+    .cand-comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .cand-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .cand-block.lula {
+      border-left: 3px solid var(--color-lula);
+      padding-left: 8px;
+    }
+
+    .cand-block.flavio {
+      border-left: 3px solid var(--color-flavio-text);
+      padding-left: 8px;
+      text-align: right;
+    }
+
+    .cand-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .cand-pct {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+    }
+
+    .cand-pct.lula { 
+      color: var(--color-lula-text); 
+      text-shadow: 0 0 10px rgba(248, 61, 3, 0.35);
+    }
+    
+    .cand-pct.flavio { 
+      color: var(--color-flavio-text); 
+      text-shadow: 0 0 10px rgba(96, 165, 250, 0.35);
+    }
+
+    .cand-votes {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .cand-cities {
+      font-size: 10px;
+      color: var(--text-sub);
+      margin-top: 2px;
+    }
+
+    .pct-bar-container {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-card-hover);
+      border-radius: 4px;
+      overflow: hidden;
+      display: flex;
+    }
+
+    .pct-bar-lula {
+      background: var(--color-lula);
+      height: 100%;
+      transition: width 0.4s ease;
+    }
+
+    .pct-bar-flavio {
+      background: var(--color-flavio);
+      height: 100%;
+      transition: width 0.4s ease;
+    }
+
+    /* Insights Section Card */
+    .insights-box {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .box-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+
+    .stat-row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .stat-val {
+      font-weight: 700;
+      color: var(--text-main);
+      text-align: right;
+    }
+
+    .val-positive {
+      color: var(--color-lula-text);
+      text-shadow: 0 0 8px rgba(248, 61, 3, 0.25);
+    }
+
+    .val-flavio {
+      color: var(--color-flavio-text);
+      text-shadow: 0 0 8px rgba(96, 165, 250, 0.25);
+    }
+
+    /* Explanatory Editorial Guide Accordion */
+    .guide-card {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .guide-header {
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-main);
+      transition: background 0.2s ease;
+    }
+
+    .guide-header:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .guide-toggle-icon {
+      font-size: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    .guide-card.open .guide-toggle-icon {
+      transform: rotate(180deg);
+    }
+
+    .guide-body {
+      display: none;
+      padding: 12px 14px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      line-height: 1.5;
+      color: var(--text-muted);
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .guide-card.open .guide-body {
+      display: flex;
+    }
+
+    .guide-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .guide-item strong {
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .guide-item p {
+      margin: 0;
+    }
+
+    /* City Detailed Deep Dive View */
+    .city-deep-dive {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .city-deep-dive.active {
+      display: flex;
+    }
+
+    .back-btn {
+      align-self: flex-start;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-main);
+    }
+
+    .city-title-header {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .city-main-name {
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      color: var(--text-main);
+    }
+
+    .city-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      display: flex;
+      gap: 8px;
+    }
+
+    .flip-alert-banner {
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .flip-alert-banner.to-lula {
+      background: var(--color-lula-soft);
+      border: 1px solid rgba(248, 61, 3, 0.4);
+      color: var(--color-lula-text);
+    }
+
+    .flip-alert-banner.to-flavio {
+      background: var(--color-flavio-soft);
+      border: 1px solid rgba(96, 165, 250, 0.4);
+      color: var(--color-flavio-text);
+    }
+
+    .round-card {
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .round-card-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .candidate-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .cand-row-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+    }
+
+    .cand-row-name {
+      font-weight: 700;
+    }
+
+    .cand-row-score {
+      font-weight: 700;
+    }
+
+    .cand-mini-bar {
+      height: 6px;
+      border-radius: 3px;
+      background: var(--bg-card-hover);
+      overflow: hidden;
+    }
+
+    .cand-mini-fill {
+      height: 100%;
+      border-radius: 3px;
+    }
+
+    .cand-mini-fill.lula { background: var(--color-lula); }
+    .cand-mini-fill.flavio { background: var(--color-flavio-text); }
+    .cand-mini-fill.outros { background: var(--color-outros); }
+
+    /* Footer Meta */
+    footer.app-footer {
+      height: 26px;
+      min-height: 26px;
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 10px;
+      color: var(--text-sub);
+      z-index: 50;
+    }
+
+    footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer a:hover {
+      color: var(--color-lula-text);
+    }
+
+    /* Loading Overlay */
+    .loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: var(--bg-base);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 200;
+      transition: opacity 0.3s ease;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(248, 61, 3, 0.2);
+      border-top-color: var(--color-lula);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    /* Mobile toggle tab button */
+    .mobile-drawer-toggle {
+      display: none;
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      z-index: 60;
+      background: var(--color-lula);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(248, 61, 3, 0.4);
+      cursor: pointer;
+    }
+
+    /* Responsive Queries */
+    @media (max-width: 900px) {
+      aside.side-panel {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        min-width: 100%;
+        height: 54%;
+        border-left: none;
+        border-top: 1px solid var(--border-strong);
+        box-shadow: 0 -10px 25px rgba(0, 0, 0, 0.4);
+        transform: translateY(0);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      aside.side-panel.collapsed {
+        transform: translateY(calc(100% - 36px));
+      }
+
+      .mobile-drawer-toggle {
+        display: flex;
+      }
+
+      .search-wrapper {
+        max-width: 200px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .header-subtitle, .badge-2026 {
+        display: none;
+      }
+      .brand-logo {
+        height: 24px;
+      }
+      .search-wrapper {
+        max-width: 140px;
+      }
+      .mode-pill {
+        padding: 4px 8px;
+        font-size: 10px;
+      }
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <!-- Loading Screen -->
+  <div class="loading-overlay" id="loading-screen">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loading-msg">Carregando mapa eleitoral do Brasil...</div>
+  </div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="brand-section">
+      <a href="https://jamildo.com" target="_blank" rel="noopener" class="brand-logo-link" title="Acessar Jamildo.com">
+        <img id="jamildo-logo" class="brand-logo" src="https://jamildo.com/media/uploads/brancologojamildo.png" alt="Jamildo.com">
+      </a>
+      <div class="header-divider"></div>
+      <div class="header-title-box">
+        <h1>ELEIÇÃO 2026 <span class="badge-2026">2º Turno</span></h1>
+        <div class="header-subtitle">Resultado Presidencial por Município</div>
+      </div>
+    </div>
+
+    <!-- Search input -->
+    <div class="search-wrapper">
+      <div class="search-input-box">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="city-search" class="search-input" placeholder="Buscar município..." autocomplete="off">
+        <button id="search-clear" class="search-clear-btn">&times;</button>
+      </div>
+      <div id="search-results" class="search-results-dropdown"></div>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <button id="theme-btn" class="icon-btn" title="Alternar tema claro/escuro">☀️</button>
+      <button id="fit-all-btn" class="icon-btn" title="Enquadrar Brasil Inteiro">🇧🇷</button>
+    </div>
+  </header>
+
+  <!-- Controls Bar -->
+  <div class="controls-bar">
+    <!-- Visual Mode Selector -->
+    <div class="mode-pills-group">
+      <button class="mode-pill active" data-mode="2t" title="Resultado definitivo do Segundo Turno">
+        <span>🏆 2º Turno (Final)</span>
+      </button>
+      <button class="mode-pill" data-mode="1t" title="Resultado do Primeiro Turno">
+        <span>1º Turno</span>
+      </button>
+      <button class="mode-pill" data-mode="flips" title="Cidades que mudaram de lado entre 1º e 2º turno">
+        <span>⚡ Viradas</span>
+      </button>
+      <button class="mode-pill" data-mode="swing" title="Onde Lula ou Flávio mais cresceram em percentual">
+        <span>📈 Variação (Swing)</span>
+      </button>
+    </div>
+
+    <!-- Filters Group -->
+    <div class="filter-pills-group">
+      <div class="region-select-wrap">
+        <select id="region-filter" title="Filtrar por Região">
+          <option value="Brasil">Brasil (Todas)</option>
+          <option value="Nordeste">Nordeste</option>
+          <option value="Sudeste">Sudeste</option>
+          <option value="Sul">Sul</option>
+          <option value="Centro-Oeste">Centro-Oeste</option>
+          <option value="Norte">Norte</option>
+        </select>
+      </div>
+
+      <div class="uf-select-wrap">
+        <select id="uf-filter" title="Filtrar por Estado (UF)">
+          <option value="TODAS">UF (Todas)</option>
+          <option value="AC">AC - Acre</option>
+          <option value="AL">AL - Alagoas</option>
+          <option value="AP">AP - Amapá</option>
+          <option value="AM">AM - Amazonas</option>
+          <option value="BA">BA - Bahia</option>
+          <option value="CE">CE - Ceará</option>
+          <option value="DF">DF - Distrito Federal</option>
+          <option value="ES">ES - Espírito Santo</option>
+          <option value="GO">GO - Goiás</option>
+          <option value="MA">MA - Maranhão</option>
+          <option value="MT">MT - Mato Grosso</option>
+          <option value="MS">MS - Mato Grosso do Sul</option>
+          <option value="MG">MG - Minas Gerais</option>
+          <option value="PA">PA - Pará</option>
+          <option value="PB">PB - Paraíba</option>
+          <option value="PR">PR - Paraná</option>
+          <option value="PE">PE - Pernambuco</option>
+          <option value="PI">PI - Piauí</option>
+          <option value="RJ">RJ - Rio de Janeiro</option>
+          <option value="RN">RN - Rio Grande do Norte</option>
+          <option value="RS">RS - Rio Grande do Sul</option>
+          <option value="RO">RO - Rondônia</option>
+          <option value="RR">RR - Roraima</option>
+          <option value="SC">SC - Santa Catarina</option>
+          <option value="SP">SP - São Paulo</option>
+          <option value="SE">SE - Sergipe</option>
+          <option value="TO">TO - Tocantins</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Area -->
+  <main class="app-main">
+    <!-- Map Viewport -->
+    <div class="map-viewport" id="viewport">
+      <!-- SVG Container -->
+      <div class="svg-container" id="svg-host"></div>
+
+      <!-- Zoom Floating Controls -->
+      <div class="map-zoom-controls">
+        <button class="zoom-btn" id="zoom-in" title="Aumentar zoom">+</button>
+        <button class="zoom-btn" id="zoom-out" title="Diminuir zoom">&minus;</button>
+        <button class="zoom-btn" id="zoom-reset" title="Restaurar visão geral">↺</button>
+      </div>
+
+      <!-- Dynamic Legend -->
+      <div class="map-legend-overlay" id="map-legend">
+        <div class="legend-title" id="legend-title">Maioria no 2º Turno</div>
+        <div class="legend-items" id="legend-items">
+          <div class="legend-row">
+            <span class="legend-swatch" style="background: var(--color-lula)"></span>
+            <span>Lula (PT)</span>
+          </div>
+          <div class="legend-row">
+            <span class="legend-swatch" style="background: var(--color-flavio)"></span>
+            <span>Flávio Bolsonaro (PL)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hover Tooltip -->
+      <div class="map-tooltip" id="map-tooltip">
+        <div class="tooltip-city">
+          <span id="tt-city-name">Recife</span>
+          <span class="tooltip-uf" id="tt-uf">PE</span>
+        </div>
+        <div id="tt-badge" class="tooltip-winner-badge">Vencedor</div>
+        <div class="tooltip-data-row">
+          <span style="color: var(--color-lula-text); font-weight:700;">Lula:</span>
+          <span id="tt-lula" style="font-weight:700;">0%</span>
+        </div>
+        <div class="tooltip-data-row">
+          <span style="color: var(--color-flavio-text); font-weight:700; text-shadow: 0 0 5px rgba(96,165,250,0.3);">Flávio:</span>
+          <span id="tt-flavio" style="font-weight:700;">0%</span>
+        </div>
+        <div class="tooltip-delta" id="tt-delta">Comparativo com 1ºT: +0.0 p.p.</div>
+      </div>
+
+      <!-- Mobile drawer toggle -->
+      <button class="mobile-drawer-toggle" id="drawer-toggle">📊 Ver Detalhes</button>
+    </div>
+
+    <!-- Side Panel -->
+    <aside class="side-panel" id="side-panel">
+      <div class="panel-content">
+
+        <!-- Regional / National Overview Panel - strictly vertical cards stack -->
+        <div class="overview-box" id="overview-view">
+          
+          <!-- Card 1: Scoreboard -->
+          <div class="scoreboard-card">
+            <div class="scoreboard-header">
+              <div class="scoreboard-scope" id="scope-title">
+                <span>Brasil (Total)</span>
+              </div>
+              <span class="scoreboard-badge" id="mode-badge">2º Turno Oficial</span>
+            </div>
+
+            <!-- Comparison numbers -->
+            <div class="cand-comparison-grid">
+              <div class="cand-block lula">
+                <div class="cand-name">Lula (PT)</div>
+                <div class="cand-pct lula" id="score-lula-pct">51.87%</div>
+                <div class="cand-votes" id="score-lula-votes">63.230.854 votos</div>
+                <div class="cand-cities" id="score-lula-cities">2.875 municípios</div>
+              </div>
+
+              <div class="cand-block flavio">
+                <div class="cand-name">Flávio (PL)</div>
+                <div class="cand-pct flavio" id="score-flavio-pct">48.13%</div>
+                <div class="cand-votes" id="score-flavio-votes">58.675.002 votos</div>
+                <div class="cand-cities" id="score-flavio-cities">2.695 municípios</div>
+              </div>
+            </div>
+
+            <div class="pct-bar-container">
+              <div class="pct-bar-lula" id="bar-lula" style="width: 51.87%"></div>
+              <div class="pct-bar-flavio" id="bar-flavio" style="width: 48.13%"></div>
+            </div>
+          </div>
+
+          <!-- Card 2: Turno 1 vs Turno 2 Comparativo -->
+          <div class="insights-box">
+            <div class="box-title">
+              <span>📊 Comparativo: O Que Mudou (1ºT → 2ºT)</span>
+            </div>
+
+            <div class="stat-row">
+              <span class="stat-label">Crescimento de Lula:</span>
+              <span class="stat-val val-positive" id="stat-var-lula">+6.61 p.p. (+10.184.330)</span>
+            </div>
+
+            <div class="stat-row">
+              <span class="stat-label">Crescimento de Flávio:</span>
+              <span class="stat-val val-flavio" id="stat-var-flavio">+1.16 p.p. (+3.624.015)</span>
+            </div>
+
+            <div class="stat-row">
+              <span class="stat-label">Cidades que viraram de lado:</span>
+              <span class="stat-val" id="stat-viradas">214 cidades</span>
+            </div>
+
+            <div class="stat-row">
+              <span class="stat-label">1º Turno (Lula x Flávio):</span>
+              <span class="stat-val" id="stat-1t-summary">45.26% vs 46.97%</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Regional Highlights Box -->
+          <div class="insights-box">
+            <div class="box-title">
+              <span>🌟 Destaques da Região</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Maior vantagem Lula:</span>
+              <span class="stat-val val-positive" id="highlight-top-lula">-</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Maior vantagem Flávio:</span>
+              <span class="stat-val val-flavio" id="highlight-top-flavio">-</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Maior salto no 2ºT:</span>
+              <span class="stat-val" id="highlight-top-growth">-</span>
+            </div>
+          </div>
+
+          <!-- Card 4: Editorial Guide / Análise da Eleição -->
+          <div class="guide-card" id="editorial-guide">
+            <div class="guide-header" id="guide-toggle-btn">
+              <span>📖 Entenda as Viradas, Variação e Insights</span>
+              <span class="guide-toggle-icon">▼</span>
+            </div>
+            <div class="guide-body" id="guide-body-content">
+              <div class="guide-item">
+                <strong>⚡ O que são as Viradas?</strong>
+                <p>Ocorrem quando um candidato venceu no 1º turno em determinado município, mas o adversário virou o jogo e conquistou a maioria no 2º turno. Em todo o país, <strong>214 municípios viraram de lado</strong>: 213 viraram pró-Lula (com forte concentração no Sudeste e Norte) e 1 virou pró-Flávio (no Centro-Oeste).</p>
+              </div>
+
+              <div class="guide-item">
+                <strong>📈 O que é a Variação (Swing em p.p.)?</strong>
+                <p>Mede o ganho ou perda de pontos percentuais entre o 1º e o 2º turno. Mostra quem melhor atraiu os votos dos eleitores de outros candidatos. Nacionalmente, Lula avançou <strong>+6,61 p.p.</strong> (de 45,26% para 51,87%), enquanto Flávio avançou <strong>+1,16 p.p.</strong> (de 46,97% para 48,13%).</p>
+              </div>
+
+              <div class="guide-item">
+                <strong>🔍 Principais Insights do Pleito 2026:</strong>
+                <p>• <strong>Virada no Sudeste:</strong> Lula cresceu +7,56 p.p. na região mais populosa do país, virando 121 cidades e neutralizando a vantagem bolsonarista.</p>
+                <p>• <strong>Muralha do Nordeste:</strong> Lula ampliou seu reduto histórico, atingindo 69,37% dos votos (+2,95 milhões de novos votos).</p>
+                <p>• <strong>Empate histórico no Norte:</strong> Disputa mais apertada do Brasil, definida por apenas 1.079 votos a favor de Lula (50,01% a 49,99%).</p>
+                <p>• <strong>Redutos do Sul e Centro-Oeste:</strong> Flávio Bolsonaro liderou com mais de 60% dos votos em ambas as regiões.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- City Deep Dive Detail View -->
+        <div class="city-deep-dive" id="city-view">
+          <button class="back-btn" id="city-back-btn">
+            <span>&larr; Voltar ao panorama</span>
+          </button>
+
+          <div class="city-title-header">
+            <div class="city-main-name" id="cd-name">Recife</div>
+            <div class="city-subtitle">
+              <span id="cd-uf-reg">Pernambuco • Região Nordeste</span>
+            </div>
+          </div>
+
+          <!-- Virada banner -->
+          <div class="flip-alert-banner" id="cd-flip-banner">
+            ⚡ Cidade que virou para Lula no 2º Turno!
+          </div>
+
+          <!-- 2º Turno Card -->
+          <div class="round-card">
+            <div class="round-card-title">
+              <span>2º Turno (Final)</span>
+              <span id="cd-2t-total">Total: 0</span>
+            </div>
+
+            <div class="candidate-row">
+              <div class="cand-row-header">
+                <span class="cand-row-name" style="color: var(--color-lula-text)">Lula (PT)</span>
+                <span class="cand-row-score" id="cd-2t-lula-score">0% (0)</span>
+              </div>
+              <div class="cand-mini-bar">
+                <div class="cand-mini-fill lula" id="cd-2t-lula-bar" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <div class="candidate-row">
+              <div class="cand-row-header">
+                <span class="cand-row-name" style="color: var(--color-flavio-text); text-shadow: 0 0 5px rgba(96,165,250,0.3);">Flávio Bolsonaro (PL)</span>
+                <span class="cand-row-score" id="cd-2t-flavio-score">0% (0)</span>
+              </div>
+              <div class="cand-mini-bar">
+                <div class="cand-mini-fill flavio" id="cd-2t-flavio-bar" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 1º Turno Card -->
+          <div class="round-card">
+            <div class="round-card-title">
+              <span>1º Turno</span>
+              <span id="cd-1t-total">Total: 0</span>
+            </div>
+
+            <div class="candidate-row">
+              <div class="cand-row-header">
+                <span class="cand-row-name" style="color: var(--color-lula-text)">Lula</span>
+                <span class="cand-row-score" id="cd-1t-lula-score">0% (0)</span>
+              </div>
+              <div class="cand-mini-bar">
+                <div class="cand-mini-fill lula" id="cd-1t-lula-bar" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <div class="candidate-row">
+              <div class="cand-row-header">
+                <span class="cand-row-name" style="color: var(--color-flavio-text); text-shadow: 0 0 5px rgba(96,165,250,0.3);">Flávio</span>
+                <span class="cand-row-score" id="cd-1t-flavio-score">0% (0)</span>
+              </div>
+              <div class="cand-mini-bar">
+                <div class="cand-mini-fill flavio" id="cd-1t-flavio-bar" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <div class="candidate-row">
+              <div class="cand-row-header">
+                <span class="cand-row-name" style="color: var(--color-outros)">Outros Candidatos</span>
+                <span class="cand-row-score" id="cd-1t-outros-score">0% (0)</span>
+              </div>
+              <div class="cand-mini-bar">
+                <div class="cand-mini-fill outros" id="cd-1t-outros-bar" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Diferença / Swing Card -->
+          <div class="insights-box">
+            <div class="box-title">
+              <span>📈 Variação (2ºT vs 1ºT)</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Variação Lula:</span>
+              <span class="stat-val" id="cd-diff-lula">+0.0 p.p.</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Variação Flávio:</span>
+              <span class="stat-val" id="cd-diff-flavio">+0.0 p.p.</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Saldo de votos Lula:</span>
+              <span class="stat-val" id="cd-diff-votos-lula">+0</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Saldo de votos Flávio:</span>
+              <span class="stat-val" id="cd-diff-votos-flavio">+0</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div>Fonte: Dados oficiais do Tribunal Superior Eleitoral (TSE)</div>
+    <div>Infográfico Interativo • <a href="https://jamildo.com" target="_blank" rel="noopener">jamildo.com</a></div>
+  </footer>
+
+  <script>
+    (function() {
+      // Configuration & State
+      const LOGO_LIGHT = 'https://jamildo.com/media/uploads/logojamildo.png';
+      const LOGO_DARK = 'https://jamildo.com/media/uploads/brancologojamildo.png';
+
+      const STATE = {
+        theme: 'dark',
+        mode: '2t', // '2t', '1t', 'flips', 'swing'
+        region: 'Brasil',
+        uf: 'TODAS',
+        selectedCityId: null,
+        dataset: null,
+        svgElement: null,
+        // Tight initial viewBox for whole Brazil (no wasted whitespace)
+        viewBox: { x: 24.1, y: 24.1, w: 761.5, h: 701.8 },
+        initialViewBox: { x: 24.1, y: 24.1, w: 761.5, h: 701.8 },
+        isPanning: false,
+        startX: 0,
+        startY: 0,
+        startVBX: 0,
+        startVBY: 0
+      };
+
+      // DOM Elements
+      const body = document.body;
+      const logoImg = document.getElementById('jamildo-logo');
+      const themeBtn = document.getElementById('theme-btn');
+      const loadingScreen = document.getElementById('loading-screen');
+      const loadingMsg = document.getElementById('loading-msg');
+      const svgHost = document.getElementById('svg-host');
+      const tooltip = document.getElementById('map-tooltip');
+      const citySearch = document.getElementById('city-search');
+      const searchResults = document.getElementById('search-results');
+      const searchClear = document.getElementById('search-clear');
+      const regionFilter = document.getElementById('region-filter');
+      const ufFilter = document.getElementById('uf-filter');
+      const modePills = document.querySelectorAll('.mode-pill');
+      const overviewView = document.getElementById('overview-view');
+      const cityView = document.getElementById('city-view');
+      const cityBackBtn = document.getElementById('city-back-btn');
+      const drawerToggle = document.getElementById('drawer-toggle');
+      const sidePanel = document.getElementById('side-panel');
+      const guideToggleBtn = document.getElementById('guide-toggle-btn');
+      const editorialGuide = document.getElementById('editorial-guide');
+
+      // Initialize Theme
+      function initTheme() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const paramTheme = urlParams.get('theme');
+        if (paramTheme === 'light' || paramTheme === 'dark') {
+          STATE.theme = paramTheme;
+        } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+          STATE.theme = 'light';
+        }
+        applyTheme(STATE.theme);
+      }
+
+      function applyTheme(theme) {
+        STATE.theme = theme;
+        body.setAttribute('data-theme', theme);
+        if (theme === 'dark') {
+          logoImg.src = LOGO_DARK;
+          themeBtn.textContent = '☀️';
+        } else {
+          logoImg.src = LOGO_LIGHT;
+          themeBtn.textContent = '🌙';
+        }
+        if (STATE.svgElement) {
+          updateMapColors();
+        }
+      }
+
+      themeBtn.addEventListener('click', () => {
+        applyTheme(STATE.theme === 'dark' ? 'light' : 'dark');
+      });
+
+      // Guide Accordion Toggle
+      guideToggleBtn.addEventListener('click', () => {
+        editorialGuide.classList.toggle('open');
+      });
+
+      // Format Numbers
+      function fmtNum(n) {
+        return (n || 0).toLocaleString('pt-BR');
+      }
+
+      function fmtPct(n) {
+        return (n || 0).toFixed(2).replace('.', ',') + '%';
+      }
+
+      function fmtSignPct(n) {
+        const sign = n > 0 ? '+' : '';
+        return sign + (n || 0).toFixed(2).replace('.', ',') + ' p.p.';
+      }
+
+      // Load Dataset
+      async function loadData() {
+        if (window.DADOS_ELEICOES) {
+          STATE.dataset = window.DADOS_ELEICOES;
+          return;
+        }
+        try {
+          loadingMsg.textContent = 'Carregando dados das apurações...';
+          const resp = await fetch('dados_eleicoes.json');
+          if (!resp.ok) throw new Error('Falha no download dos dados');
+          STATE.dataset = await resp.json();
+        } catch (err) {
+          console.error(err);
+          loadingMsg.textContent = 'Erro ao carregar dados. Verifique a conexão.';
+        }
+      }
+
+      // Load SVG Map (Supports instant zero-CORS script and fetch fallback)
+      async function loadSVG() {
+        try {
+          loadingMsg.textContent = 'Renderizando mapa municipal...';
+          let svgText = window.BRASIL_SVG_DATA;
+
+          if (!svgText) {
+            try {
+              const resp = await fetch('brasilmunicipios.svg');
+              if (resp.ok) svgText = await resp.text();
+            } catch (e) {
+              console.warn('Network fetch unavailable, checking cache:', e);
+            }
+          }
+
+          if (!svgText) {
+            throw new Error('Conteúdo do mapa não encontrado.');
+          }
+
+          // Inject full SVG directly via innerHTML to preserve all SVG namespaces
+          svgHost.innerHTML = svgText;
+
+          STATE.svgElement = svgHost.querySelector('#wrapper') || svgHost.querySelector('svg');
+          if (!STATE.svgElement) {
+            throw new Error('Elemento SVG não encontrado no documento.');
+          }
+
+          // Ensure SVG is responsive
+          STATE.svgElement.setAttribute('width', '100%');
+          STATE.svgElement.setAttribute('height', '100%');
+          STATE.svgElement.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+
+          // Initialize tight Brasil viewBox in wrapper coordinate space (0 0 750.7 690.6)
+          STATE.viewBox = { x: 0, y: 0, w: 750.7, h: 690.6 };
+          STATE.initialViewBox = { ...STATE.viewBox };
+          STATE.svgElement.setAttribute('viewBox', `${STATE.viewBox.x} ${STATE.viewBox.y} ${STATE.viewBox.w} ${STATE.viewBox.h}`);
+
+          setupMapInteractions();
+          updateMapColors();
+          updateOverview();
+        } catch (err) {
+          console.error(err);
+          loadingMsg.textContent = 'Falha ao renderizar mapa interativo. Verifique os arquivos.';
+        }
+      }
+
+      // Color mapping functions
+      function getLulaColor(margin) {
+        if (margin > 40) return '#d62f00';
+        if (margin > 20) return '#f83d03';
+        if (margin > 10) return '#ff6030';
+        return '#ff8863';
+      }
+
+      function getFlavioColor(margin) {
+        if (margin > 40) return '#012959';
+        if (margin > 20) return '#024796';
+        if (margin > 10) return '#226bc2';
+        return '#5695e2';
+      }
+
+      function getSwingColor(varLula) {
+        if (varLula >= 8) return '#d62f00';
+        if (varLula >= 4) return '#f83d03';
+        if (varLula >= 1) return '#ff8863';
+        if (varLula <= -8) return '#012959';
+        if (varLula <= -4) return '#024796';
+        if (varLula <= -1) return '#5695e2';
+        return STATE.theme === 'dark' ? '#334155' : '#cbd5e1';
+      }
+
+      // Apply Colors to Map Paths
+      function updateMapColors() {
+        if (!STATE.svgElement || !STATE.dataset) return;
+        const paths = STATE.svgElement.querySelectorAll('path');
+        const muns = STATE.dataset.municipios;
+        const mode = STATE.mode;
+        const isDark = STATE.theme === 'dark';
+        const neutralBg = isDark ? '#1e293b' : '#e2e8f0';
+
+        paths.forEach(p => {
+          const id = p.getAttribute('id');
+          if (!id || id.includes('-')) return;
+
+          const d = muns[id];
+          if (!d) {
+            p.style.fill = neutralBg;
+            return;
+          }
+
+          if (mode === '2t') {
+            const w = d.t2.w;
+            const m = d.t2.m;
+            p.style.fill = w === 'lula' ? getLulaColor(m) : getFlavioColor(m);
+            p.style.opacity = '1';
+          } else if (mode === '1t') {
+            const w = d.t1.w;
+            const m = d.t1.m;
+            if (w === 'lula') {
+              p.style.fill = getLulaColor(m);
+            } else if (w === 'flavio') {
+              p.style.fill = getFlavioColor(m);
+            } else {
+              p.style.fill = '#10b981';
+            }
+            p.style.opacity = '1';
+          } else if (mode === 'flips') {
+            const vir = d.d.vir;
+            if (vir === 'lula') {
+              p.style.fill = '#f83d03';
+              p.style.opacity = '1';
+            } else if (vir === 'flavio') {
+              p.style.fill = '#024796';
+              p.style.opacity = '1';
+            } else {
+              p.style.fill = neutralBg;
+              p.style.opacity = '0.35';
+            }
+          } else if (mode === 'swing') {
+            const varL = d.d.l_p;
+            p.style.fill = getSwingColor(varL);
+            p.style.opacity = '1';
+          }
+        });
+
+        updateLegend();
+      }
+
+      // Update Legend Based on Active Mode
+      function updateLegend() {
+        const legendTitle = document.getElementById('legend-title');
+        const legendItems = document.getElementById('legend-items');
+
+        if (STATE.mode === '2t') {
+          legendTitle.textContent = 'Maioria no 2º Turno (Final)';
+          legendItems.innerHTML = `
+            <div class="legend-row">
+              <span class="legend-swatch" style="background: var(--color-lula)"></span>
+              <span>Lula (PT)</span>
+            </div>
+            <div class="legend-row">
+              <span class="legend-swatch" style="background: var(--color-flavio)"></span>
+              <span>Flávio Bolsonaro (PL)</span>
+            </div>
+          `;
+        } else if (STATE.mode === '1t') {
+          legendTitle.textContent = 'Maioria no 1º Turno';
+          legendItems.innerHTML = `
+            <div class="legend-row">
+              <span class="legend-swatch" style="background: var(--color-lula)"></span>
+              <span>Lula (PT)</span>
+            </div>
+            <div class="legend-row">
+              <span class="legend-swatch" style="background: var(--color-flavio)"></span>
+              <span>Flávio Bolsonaro (PL)</span>
+            </div>
+            <div class="legend-row">
+              <span class="legend-swatch" style="background: var(--color-outros)"></span>
+              <span>Outros Candidatos</span>
+            </div>
+          `;
+        } else if (STATE.mode === 'flips') {
+          legendTitle.textContent = 'Viradas (1ºT → 2ºT)';
+          legendItems.innerHTML = `
+            <div class="legend-row">
+              <span class="legend-swatch" style="background: var(--color-lula)"></span>
+              <span>Virou para Lula (213)</span>
+            </div>
+            <div class="legend-row">
+              <span class="legend-swatch" style="background: var(--color-flavio)"></span>
+              <span>Virou para Flávio (1)</span>
+            </div>
+            <div class="legend-row">
+              <span class="legend-swatch" style="background: ${STATE.theme === 'dark' ? '#334155' : '#cbd5e1'}"></span>
+              <span>Sem virada (Manteve)</span>
+            </div>
+          `;
+        } else if (STATE.mode === 'swing') {
+          legendTitle.textContent = 'Variação Percentual (p.p.)';
+          legendItems.innerHTML = `
+            <div class="legend-scale-bar" style="background: linear-gradient(to right, #024796, #5695e2, #94a3b8, #ff8863, #f83d03, #d62f00);"></div>
+            <div class="legend-scale-labels">
+              <span>+Flávio</span>
+              <span>0</span>
+              <span>+Lula</span>
+            </div>
+          `;
+        }
+      }
+
+      // Smooth ViewBox Zoom & Pan Transitions (for buttons and programmatic navigation)
+      let animationFrameId = null;
+      function cancelAnimation() {
+        if (animationFrameId) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+      }
+
+      function animateViewBox(target, duration = 380) {
+        if (!STATE.svgElement) return;
+        cancelAnimation();
+
+        const start = { ...STATE.viewBox };
+        const startTime = performance.now();
+
+        function step(now) {
+          const progress = Math.min((now - startTime) / duration, 1);
+          const ease = 1 - Math.pow(1 - progress, 3); // cubic ease out
+
+          STATE.viewBox.x = start.x + (target.x - start.x) * ease;
+          STATE.viewBox.y = start.y + (target.y - start.y) * ease;
+          STATE.viewBox.w = start.w + (target.w - start.w) * ease;
+          STATE.viewBox.h = start.h + (target.h - start.h) * ease;
+
+          STATE.svgElement.setAttribute('viewBox', `${STATE.viewBox.x} ${STATE.viewBox.y} ${STATE.viewBox.w} ${STATE.viewBox.h}`);
+
+          if (progress < 1) {
+            animationFrameId = requestAnimationFrame(step);
+          } else {
+            animationFrameId = null;
+          }
+        }
+        animationFrameId = requestAnimationFrame(step);
+      }
+
+      function zoomBy(factor) {
+        const cx = STATE.viewBox.x + STATE.viewBox.w / 2;
+        const cy = STATE.viewBox.y + STATE.viewBox.h / 2;
+        let newW = STATE.viewBox.w * factor;
+        let newH = STATE.viewBox.h * factor;
+        newW = Math.max(20, Math.min(newW, 950));
+        newH = Math.max(20, Math.min(newH, 900));
+
+        animateViewBox({
+          x: cx - newW / 2,
+          y: cy - newH / 2,
+          w: newW,
+          h: newH
+        }, 220);
+      }
+
+      function resetView() {
+        STATE.selectedCityId = null;
+        clearSelectedPath();
+        if (STATE.uf !== 'TODAS') {
+          zoomToUF(STATE.uf);
+        } else if (STATE.region !== 'Brasil') {
+          zoomToRegion(STATE.region);
+        } else {
+          animateViewBox(STATE.initialViewBox, 400);
+          updateOverview();
+        }
+      }
+
+      function zoomToRegion(reg) {
+        STATE.region = reg;
+        regionFilter.value = reg;
+        STATE.uf = 'TODAS';
+        ufFilter.value = 'TODAS';
+
+        if (STATE.dataset && STATE.dataset.viewboxes && STATE.dataset.viewboxes.regioes[reg]) {
+          const vb = STATE.dataset.viewboxes.regioes[reg];
+          animateViewBox({ x: vb[0], y: vb[1], w: vb[2], h: vb[3] }, 450);
+        }
+        updateOverview();
+      }
+
+      function zoomToUF(uf) {
+        STATE.uf = uf;
+        ufFilter.value = uf;
+
+        if (STATE.dataset && STATE.dataset.viewboxes && STATE.dataset.viewboxes.estados[uf]) {
+          const vb = STATE.dataset.viewboxes.estados[uf];
+          animateViewBox({ x: vb[0], y: vb[1], w: vb[2], h: vb[3] }, 450);
+        }
+        updateOverview();
+      }
+
+      function zoomToPath(pathElement) {
+        if (!pathElement) return;
+        try {
+          const bbox = pathElement.getBBox();
+          const transX = 29.728758;
+          const transY = 29.697035;
+          const pad = Math.max(bbox.width, bbox.height) * 3.5;
+          const target = {
+            x: (bbox.x - transX) - pad,
+            y: (bbox.y - transY) - pad,
+            w: bbox.width + pad * 2,
+            h: bbox.height + pad * 2
+          };
+          animateViewBox(target, 450);
+        } catch (e) {
+          console.warn('getBBox error:', e);
+        }
+      }
+
+      function clearSelectedPath() {
+        const prev = STATE.svgElement ? STATE.svgElement.querySelector('.active-selected') : null;
+        if (prev) prev.classList.remove('active-selected');
+      }
+
+      function highlightCity(id) {
+        clearSelectedPath();
+        STATE.selectedCityId = id;
+        const p = document.getElementById(id);
+        if (p) {
+          p.classList.add('active-selected');
+          zoomToPath(p);
+        }
+        showCityDetails(id);
+      }
+
+      // Robust Map Pan & Zoom Controller (Mouse Wheel, Mouse Drag, Touch Pan, Multi-Touch Pinch Zoom)
+      function setupMapInteractions() {
+        const host = svgHost;
+
+        // Hover & Tooltip (desktop)
+        host.addEventListener('mousemove', (e) => {
+          if (isMouseDown || isTouchActive) return;
+          const target = e.target;
+          if (target && target.tagName === 'path') {
+            const id = target.getAttribute('id');
+            if (id && !id.includes('-') && STATE.dataset && STATE.dataset.municipios[id]) {
+              showTooltip(e, STATE.dataset.municipios[id]);
+              return;
+            }
+          }
+          hideTooltip();
+        });
+
+        host.addEventListener('mouseleave', hideTooltip);
+
+        // Click / Tap on Municipality (distinguish click from drag)
+        host.addEventListener('click', (e) => {
+          if (hasMouseMoved || hasTouchMoved) return;
+          const target = e.target;
+          if (target && target.tagName === 'path') {
+            const id = target.getAttribute('id');
+            if (id && !id.includes('-') && STATE.dataset && STATE.dataset.municipios[id]) {
+              highlightCity(id);
+            }
+          }
+        });
+
+        // Double-click / Double-tap zoom
+        host.addEventListener('dblclick', (e) => {
+          e.preventDefault();
+          const rect = host.getBoundingClientRect();
+          if (!rect.width || !rect.height) return;
+
+          const mouseX = e.clientX - rect.left;
+          const mouseY = e.clientY - rect.top;
+
+          const svgX = STATE.viewBox.x + (mouseX / rect.width) * STATE.viewBox.w;
+          const svgY = STATE.viewBox.y + (mouseY / rect.height) * STATE.viewBox.h;
+
+          const factor = 0.55; // Zoom in ~1.8x
+          let newW = Math.max(20, STATE.viewBox.w * factor);
+          let newH = Math.max(20, STATE.viewBox.h * factor);
+          const newX = svgX - (mouseX / rect.width) * newW;
+          const newY = svgY - (mouseY / rect.height) * newH;
+
+          animateViewBox({ x: newX, y: newY, w: newW, h: newH }, 280);
+        });
+
+        // 1. Mouse Wheel Zoom (Continuous, smooth, cursor-anchored)
+        host.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          cancelAnimation();
+
+          // Normalize delta between standard wheel and high-precision trackpads
+          let delta = e.deltaY;
+          if (e.deltaMode === 1) delta *= 24; // lines
+          else if (e.deltaMode === 2) delta *= 240; // pages
+
+          // Cap single delta burst
+          delta = Math.max(-120, Math.min(120, delta));
+
+          // Exponential scale factor: positive delta = zoom out (>1), negative delta = zoom in (<1)
+          const factor = Math.pow(1.0022, delta);
+
+          const rect = host.getBoundingClientRect();
+          if (!rect.width || !rect.height) return;
+
+          const mouseX = e.clientX - rect.left;
+          const mouseY = e.clientY - rect.top;
+
+          // Target point in SVG coordinates
+          const svgX = STATE.viewBox.x + (mouseX / rect.width) * STATE.viewBox.w;
+          const svgY = STATE.viewBox.y + (mouseY / rect.height) * STATE.viewBox.h;
+
+          let newW = STATE.viewBox.w * factor;
+          let newH = STATE.viewBox.h * factor;
+
+          // Limit zoom levels (min 20 for extreme close-up, max 950 for full view)
+          const minW = 20;
+          const maxW = 950;
+          if (newW < minW) {
+            newW = minW;
+            newH = minW * (STATE.initialViewBox.h / STATE.initialViewBox.w);
+          } else if (newW > maxW) {
+            newW = maxW;
+            newH = maxW * (STATE.initialViewBox.h / STATE.initialViewBox.w);
+          }
+
+          const newX = svgX - (mouseX / rect.width) * newW;
+          const newY = svgY - (mouseY / rect.height) * newH;
+
+          STATE.viewBox = { x: newX, y: newY, w: newW, h: newH };
+          STATE.svgElement.setAttribute('viewBox', `${newX} ${newY} ${newW} ${newH}`);
+        }, { passive: false });
+
+        // 2. Mouse Drag Pan
+        let isMouseDown = false;
+        let hasMouseMoved = false;
+        let mouseStartX = 0;
+        let mouseStartY = 0;
+        let mouseStartVB = { x: 0, y: 0, w: 0, h: 0 };
+
+        host.addEventListener('mousedown', (e) => {
+          if (e.button !== 0) return; // Left button only
+          cancelAnimation();
+          isMouseDown = true;
+          hasMouseMoved = false;
+          mouseStartX = e.clientX;
+          mouseStartY = e.clientY;
+          mouseStartVB = { ...STATE.viewBox };
+          host.style.cursor = 'grabbing';
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (!isMouseDown || !STATE.svgElement) return;
+          const dx = e.clientX - mouseStartX;
+          const dy = e.clientY - mouseStartY;
+
+          if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+            hasMouseMoved = true;
+            hideTooltip();
+          }
+
+          if (hasMouseMoved) {
+            const rect = host.getBoundingClientRect();
+            const scaleX = mouseStartVB.w / rect.width;
+            const scaleY = mouseStartVB.h / rect.height;
+
+            const newX = mouseStartVB.x - dx * scaleX;
+            const newY = mouseStartVB.y - dy * scaleY;
+
+            STATE.viewBox.x = newX;
+            STATE.viewBox.y = newY;
+            STATE.svgElement.setAttribute('viewBox', `${newX} ${newY} ${STATE.viewBox.w} ${STATE.viewBox.h}`);
+          }
+        });
+
+        window.addEventListener('mouseup', () => {
+          if (isMouseDown) {
+            isMouseDown = false;
+            host.style.cursor = 'grab';
+          }
+        });
+
+        // 3. Touch Gestures: 1-finger Pan & 2-finger Pinch Zoom (Mobile / Tablet)
+        let isTouchActive = false;
+        let hasTouchMoved = false;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchStartVB = { x: 0, y: 0, w: 0, h: 0 };
+
+        // Multi-touch Pinch state
+        let isPinching = false;
+        let pinchStartDist = 0;
+        let pinchStartMidX = 0;
+        let pinchStartMidY = 0;
+        let pinchStartVB = { x: 0, y: 0, w: 0, h: 0 };
+
+        host.addEventListener('touchstart', (e) => {
+          cancelAnimation();
+
+          if (e.touches.length === 1) {
+            isTouchActive = true;
+            isPinching = false;
+            hasTouchMoved = false;
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            touchStartVB = { ...STATE.viewBox };
+          } else if (e.touches.length === 2) {
+            isTouchActive = false;
+            isPinching = true;
+            hasTouchMoved = true;
+            hideTooltip();
+
+            pinchStartDist = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY
+            );
+            pinchStartMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            pinchStartMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+            pinchStartVB = { ...STATE.viewBox };
+          }
+        }, { passive: false });
+
+        host.addEventListener('touchmove', (e) => {
+          // Critical: suppress page scroll while user touches the map canvas
+          e.preventDefault();
+
+          const rect = host.getBoundingClientRect();
+          if (!rect.width || !rect.height) return;
+
+          if (isTouchActive && e.touches.length === 1) {
+            // 1-Finger Smooth Pan
+            const dx = e.touches[0].clientX - touchStartX;
+            const dy = e.touches[0].clientY - touchStartY;
+
+            if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+              hasTouchMoved = true;
+              hideTooltip();
+            }
+
+            if (hasTouchMoved) {
+              const scaleX = touchStartVB.w / rect.width;
+              const scaleY = touchStartVB.h / rect.height;
+
+              const newX = touchStartVB.x - dx * scaleX;
+              const newY = touchStartVB.y - dy * scaleY;
+
+              STATE.viewBox.x = newX;
+              STATE.viewBox.y = newY;
+              STATE.svgElement.setAttribute('viewBox', `${newX} ${newY} ${STATE.viewBox.w} ${STATE.viewBox.h}`);
+            }
+          } else if (isPinching && e.touches.length === 2) {
+            // 2-Finger Precision Pinch Zoom
+            const currentDist = Math.hypot(
+              e.touches[0].clientX - e.touches[1].clientX,
+              e.touches[0].clientY - e.touches[1].clientY
+            );
+
+            if (pinchStartDist <= 0 || currentDist <= 0) return;
+
+            // Factor: fingers spread apart (currentDist > startDist) -> factor < 1 (zoom in)
+            const factor = pinchStartDist / currentDist;
+
+            const currentMidX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+            const currentMidY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+
+            // SVG coordinates of the initial pinch midpoint
+            const svgMidX = pinchStartVB.x + ((pinchStartMidX - rect.left) / rect.width) * pinchStartVB.w;
+            const svgMidY = pinchStartVB.y + ((pinchStartMidY - rect.top) / rect.height) * pinchStartVB.h;
+
+            let newW = pinchStartVB.w * factor;
+            let newH = pinchStartVB.h * factor;
+
+            const minW = 20;
+            const maxW = 950;
+            newW = Math.max(minW, Math.min(maxW, newW));
+            newH = Math.max(minW, Math.min(maxW, newH));
+
+            // Pan offset of the pinch center
+            const panDx = (currentMidX - pinchStartMidX) * (pinchStartVB.w / rect.width);
+            const panDy = (currentMidY - pinchStartMidY) * (pinchStartVB.h / rect.height);
+
+            const newX = svgMidX - ((currentMidX - rect.left) / rect.width) * newW - panDx;
+            const newY = svgMidY - ((currentMidY - rect.top) / rect.height) * newH - panDy;
+
+            STATE.viewBox = { x: newX, y: newY, w: newW, h: newH };
+            STATE.svgElement.setAttribute('viewBox', `${newX} ${newY} ${newW} ${newH}`);
+          }
+        }, { passive: false });
+
+        host.addEventListener('touchend', (e) => {
+          if (e.touches.length === 0) {
+            isTouchActive = false;
+            isPinching = false;
+          } else if (e.touches.length === 1) {
+            // Smoothly drop from 2 fingers to 1 finger without jump
+            isPinching = false;
+            isTouchActive = true;
+            hasTouchMoved = true;
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            touchStartVB = { ...STATE.viewBox };
+          }
+        });
+
+        // Zoom button bindings
+        document.getElementById('zoom-in').addEventListener('click', () => zoomBy(0.72));
+        document.getElementById('zoom-out').addEventListener('click', () => zoomBy(1.38));
+        document.getElementById('zoom-reset').addEventListener('click', resetView);
+        document.getElementById('fit-all-btn').addEventListener('click', () => zoomToRegion('Brasil'));
+      }
+
+      function showTooltip(e, mun) {
+        const rect = svgHost.getBoundingClientRect();
+        tooltip.style.left = (e.clientX - rect.left) + 'px';
+        tooltip.style.top = (e.clientY - rect.top) + 'px';
+        tooltip.style.display = 'block';
+
+        document.getElementById('tt-city-name').textContent = mun.nm;
+        document.getElementById('tt-uf').textContent = mun.uf;
+
+        const badge = document.getElementById('tt-badge');
+        const isLula = mun.t2.w === 'lula';
+        badge.textContent = isLula ? '🏆 Lula Maioria no 2ºT' : '🏆 Flávio Maioria no 2ºT';
+        
+        // High-contrast, sharp badges with crisp text and bright borders
+        if (isLula) {
+          badge.style.background = '#f83d03';
+          badge.style.color = '#ffffff';
+          badge.style.border = '1px solid #ff7a59';
+          badge.style.textShadow = '0 1px 2px rgba(0,0,0,0.5)';
+        } else {
+          badge.style.background = '#024796';
+          badge.style.color = '#ffffff';
+          badge.style.border = '1px solid #60a5fa';
+          badge.style.textShadow = '0 1px 2px rgba(0,0,0,0.5)';
+        }
+
+        document.getElementById('tt-lula').textContent = fmtPct(mun.t2.l_p);
+        document.getElementById('tt-flavio').textContent = fmtPct(mun.t2.f_p);
+
+        const delta = document.getElementById('tt-delta');
+        if (mun.d.vir) {
+          delta.textContent = `⚡ Virada para ${mun.d.vir === 'lula' ? 'Lula' : 'Flávio'} no 2ºT!`;
+          delta.style.color = '#f59e0b';
+        } else {
+          delta.textContent = `Crescimento Lula: ${fmtSignPct(mun.d.l_p)}`;
+          delta.style.color = 'var(--text-muted)';
+        }
+      }
+
+      function hideTooltip() {
+        tooltip.style.display = 'none';
+      }
+
+      // Update Overview Dashboard
+      function updateOverview() {
+        if (!STATE.dataset) return;
+        overviewView.style.display = 'flex';
+        cityView.style.display = 'none';
+
+        let stats = null;
+        let scopeTitle = 'Brasil (Total Nacional)';
+
+        if (STATE.uf !== 'TODAS' && STATE.dataset.estados[STATE.uf]) {
+          stats = STATE.dataset.estados[STATE.uf];
+          scopeTitle = `Estado: ${STATE.uf}`;
+        } else if (STATE.region !== 'Brasil' && STATE.dataset.regioes[STATE.region]) {
+          stats = STATE.dataset.regioes[STATE.region];
+          scopeTitle = `Região: ${STATE.region}`;
+        } else {
+          stats = STATE.dataset.totais;
+        }
+
+        document.getElementById('scope-title').innerHTML = `<span>${scopeTitle}</span>`;
+        document.getElementById('mode-badge').textContent = STATE.mode === '2t' ? '2º Turno (Final)' : 
+          STATE.mode === '1t' ? '1º Turno' : STATE.mode === 'flips' ? 'Viradas' : 'Variação';
+
+        // Candidate Scores
+        const lulaPct = stats.t2.lula_pct;
+        const flavioPct = stats.t2.flavio_pct;
+
+        document.getElementById('score-lula-pct').textContent = fmtPct(lulaPct);
+        document.getElementById('score-lula-votes').textContent = fmtNum(stats.t2.lula) + ' votos';
+        document.getElementById('score-lula-cities').textContent = fmtNum(stats.t2.cidades_lula) + ' municípios';
+
+        document.getElementById('score-flavio-pct').textContent = fmtPct(flavioPct);
+        document.getElementById('score-flavio-votes').textContent = fmtNum(stats.t2.flavio) + ' votos';
+        document.getElementById('score-flavio-cities').textContent = fmtNum(stats.t2.cidades_flavio) + ' municípios';
+
+        document.getElementById('bar-lula').style.width = lulaPct + '%';
+        document.getElementById('bar-flavio').style.width = flavioPct + '%';
+
+        // Insights
+        document.getElementById('stat-var-lula').textContent = `${fmtSignPct(stats.var_lula_pp)} (${stats.var_lula_votos > 0 ? '+' : ''}${fmtNum(stats.var_lula_votos)})`;
+        document.getElementById('stat-var-flavio').textContent = `${fmtSignPct(stats.var_flavio_pp)} (${stats.var_flavio_votos > 0 ? '+' : ''}${fmtNum(stats.var_flavio_votos)})`;
+        document.getElementById('stat-viradas').textContent = `${fmtNum(stats.viradas_lula + stats.viradas_flavio)} cidades (${stats.viradas_lula} pró-Lula)`;
+        document.getElementById('stat-1t-summary').textContent = `${fmtPct(stats.t1.lula_pct)} vs ${fmtPct(stats.t1.flavio_pct)}`;
+
+        // Calculate regional top highlights
+        computeHighlights(stats);
+      }
+
+      function computeHighlights(stats) {
+        if (!STATE.dataset) return;
+        const muns = Object.values(STATE.dataset.municipios);
+        const filtered = muns.filter(m => {
+          if (STATE.uf !== 'TODAS') return m.uf === STATE.uf;
+          if (STATE.region !== 'Brasil') return m.reg === STATE.region;
+          return true;
+        });
+
+        if (!filtered.length) return;
+
+        let topLula = filtered[0];
+        let topFlavio = filtered[0];
+        let topGrowth = filtered[0];
+
+        filtered.forEach(m => {
+          if (m.t2.l_p > topLula.t2.l_p) topLula = m;
+          if (m.t2.f_p > topFlavio.t2.f_p) topFlavio = m;
+          if (m.d.l_p > topGrowth.d.l_p) topGrowth = m;
+        });
+
+        document.getElementById('highlight-top-lula').textContent = `${topLula.nm} (${fmtPct(topLula.t2.l_p)})`;
+        document.getElementById('highlight-top-flavio').textContent = `${topFlavio.nm} (${fmtPct(topFlavio.t2.f_p)})`;
+        document.getElementById('highlight-top-growth').textContent = `${topGrowth.nm} (${fmtSignPct(topGrowth.d.l_p)})`;
+      }
+
+      // Show City Deep Dive Details
+      function showCityDetails(id) {
+        if (!STATE.dataset || !STATE.dataset.municipios[id]) return;
+        const mun = STATE.dataset.municipios[id];
+
+        overviewView.style.display = 'none';
+        cityView.style.display = 'flex';
+
+        // Expand mobile drawer if collapsed
+        sidePanel.classList.remove('collapsed');
+
+        document.getElementById('cd-name').textContent = mun.nm;
+        document.getElementById('cd-uf-reg').textContent = `${mun.uf} • Região ${mun.reg}`;
+
+        // Virada Banner
+        const flipBanner = document.getElementById('cd-flip-banner');
+        if (mun.d.vir) {
+          flipBanner.style.display = 'flex';
+          if (mun.d.vir === 'lula') {
+            flipBanner.className = 'flip-alert-banner to-lula';
+            flipBanner.textContent = '⚡ Virada: Essa cidade votou em Flávio/Terceira via no 1ºT e em Lula no 2ºT!';
+          } else {
+            flipBanner.className = 'flip-alert-banner to-flavio';
+            flipBanner.textContent = '⚡ Virada: Essa cidade virou para Flávio no 2º Turno!';
+          }
+        } else {
+          flipBanner.style.display = 'none';
+        }
+
+        // 2T Details
+        document.getElementById('cd-2t-total').textContent = `Total Válidos: ${fmtNum(mun.t2.tot)}`;
+        document.getElementById('cd-2t-lula-score').textContent = `${fmtPct(mun.t2.l_p)} (${fmtNum(mun.t2.l_v)} votos)`;
+        document.getElementById('cd-2t-flavio-score').textContent = `${fmtPct(mun.t2.f_p)} (${fmtNum(mun.t2.f_v)} votos)`;
+        document.getElementById('cd-2t-lula-bar').style.width = mun.t2.l_p + '%';
+        document.getElementById('cd-2t-flavio-bar').style.width = mun.t2.f_p + '%';
+
+        // 1T Details
+        document.getElementById('cd-1t-total').textContent = `Total Válidos: ${fmtNum(mun.t1.tot)}`;
+        document.getElementById('cd-1t-lula-score').textContent = `${fmtPct(mun.t1.l_p)} (${fmtNum(mun.t1.l_v)})`;
+        document.getElementById('cd-1t-flavio-score').textContent = `${fmtPct(mun.t1.f_p)} (${fmtNum(mun.t1.f_v)})`;
+        document.getElementById('cd-1t-outros-score').textContent = `${fmtPct(mun.t1.o_p)} (${fmtNum(mun.t1.o_v)})`;
+        document.getElementById('cd-1t-lula-bar').style.width = mun.t1.l_p + '%';
+        document.getElementById('cd-1t-flavio-bar').style.width = mun.t1.f_p + '%';
+        document.getElementById('cd-1t-outros-bar').style.width = mun.t1.o_p + '%';
+
+        // Diffs
+        const diffLula = document.getElementById('cd-diff-lula');
+        diffLula.textContent = fmtSignPct(mun.d.l_p);
+        diffLula.className = mun.d.l_p >= 0 ? 'stat-val val-positive' : 'stat-val val-flavio';
+
+        const diffFla = document.getElementById('cd-diff-flavio');
+        diffFla.textContent = fmtSignPct(mun.d.f_p);
+        diffFla.className = mun.d.f_p >= 0 ? 'stat-val val-flavio' : 'stat-val val-positive';
+
+        document.getElementById('cd-diff-votos-lula').textContent = (mun.d.l_v >= 0 ? '+' : '') + fmtNum(mun.d.l_v);
+        document.getElementById('cd-diff-votos-flavio').textContent = (mun.d.f_v >= 0 ? '+' : '') + fmtNum(mun.d.f_v);
+      }
+
+      cityBackBtn.addEventListener('click', () => {
+        clearSelectedPath();
+        updateOverview();
+      });
+
+      // City Search Autocomplete
+      function stripAccents(str) {
+        return (str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      }
+
+      citySearch.addEventListener('input', (e) => {
+        const query = stripAccents(e.target.value.trim());
+        if (!query || query.length < 2 || !STATE.dataset) {
+          searchResults.style.display = 'none';
+          searchClear.style.display = query.length > 0 ? 'block' : 'none';
+          return;
+        }
+
+        searchClear.style.display = 'block';
+        const muns = Object.values(STATE.dataset.municipios);
+        const matches = [];
+        const seenIds = new Set();
+
+        for (let i = 0; i < muns.length; i++) {
+          const m = muns[i];
+          if (seenIds.has(m.id)) continue;
+          const normName = stripAccents(m.nm);
+          const isMatch = normName.includes(query) || (m.uf === 'DF' && ('distrito federal'.includes(query) || 'brasilia'.includes(query)));
+          if (isMatch) {
+            seenIds.add(m.id);
+            matches.push(m);
+            if (matches.length >= 10) break;
+          }
+        }
+
+        renderSearchResults(matches);
+      });
+
+      function renderSearchResults(list) {
+        if (!list.length) {
+          searchResults.innerHTML = '<div style="padding: 10px; font-size: 11px; color: var(--text-muted); text-align: center;">Nenhum município encontrado</div>';
+          searchResults.style.display = 'block';
+          return;
+        }
+
+        searchResults.innerHTML = list.map(m => `
+          <div class="search-item" data-id="${m.id}">
+            <div class="search-item-info">
+              <span class="search-item-name">${m.nm}</span>
+              <span class="search-item-uf">${m.uf} • Região ${m.reg}</span>
+            </div>
+            <span class="search-item-badge ${m.t2.w}">
+              ${m.t2.w === 'lula' ? 'Lula ' + fmtPct(m.t2.l_p) : 'Flávio ' + fmtPct(m.t2.f_p)}
+            </span>
+          </div>
+        `).join('');
+
+        searchResults.style.display = 'block';
+      }
+
+      searchResults.addEventListener('click', (e) => {
+        const item = e.target.closest('.search-item');
+        if (item) {
+          const id = item.getAttribute('data-id');
+          citySearch.value = item.querySelector('.search-item-name').textContent;
+          searchResults.style.display = 'none';
+          highlightCity(id);
+        }
+      });
+
+      searchClear.addEventListener('click', () => {
+        citySearch.value = '';
+        searchResults.style.display = 'none';
+        searchClear.style.display = 'none';
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-wrapper')) {
+          searchResults.style.display = 'none';
+        }
+      });
+
+      // Filter Handlers
+      modePills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          modePills.forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          STATE.mode = pill.getAttribute('data-mode');
+          updateMapColors();
+          updateOverview();
+        });
+      });
+
+      regionFilter.addEventListener('change', (e) => {
+        zoomToRegion(e.target.value);
+      });
+
+      ufFilter.addEventListener('change', (e) => {
+        if (e.target.value === 'TODAS') {
+          zoomToRegion(STATE.region);
+        } else {
+          zoomToUF(e.target.value);
+        }
+      });
+
+      // Mobile Drawer Toggle
+      drawerToggle.addEventListener('click', () => {
+        sidePanel.classList.toggle('collapsed');
+      });
+
+      // App Initialization
+      async function init() {
+        initTheme();
+        await loadData();
+        await loadSVG();
+        loadingScreen.style.opacity = '0';
+        setTimeout(() => {
+          loadingScreen.style.display = 'none';
+        }, 300);
+      }
+
+      init();
+    })();
+  </script>
+</body>
+</html>
