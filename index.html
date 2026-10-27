@@ -393,10 +393,34 @@
       gap: 6px;
     }
 
-    .region-select-wrap select, .uf-select-wrap select {
-      height: 28px;
-      padding: 0 8px;
-      border-radius: 6px;
+    .region-select-wrap,
+    .uf-select-wrap {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .region-select-wrap::after,
+    .uf-select-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: 9px;
+      font-size: 10px;
+      color: var(--text-muted);
+      pointer-events: none;
+      transition: color 0.2s ease;
+    }
+
+    .region-select-wrap:hover::after,
+    .uf-select-wrap:hover::after {
+      color: var(--text-main);
+    }
+
+    .region-select-wrap select,
+    .uf-select-wrap select {
+      height: 30px;
+      padding: 0 24px 0 10px;
+      border-radius: 7px;
       background: var(--bg-input);
       border: 1px solid var(--border);
       color: var(--text-main);
@@ -405,16 +429,23 @@
       font-weight: 600;
       cursor: pointer;
       outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
-    .region-select-wrap select:focus, .uf-select-wrap select:focus {
+    .region-select-wrap select:focus,
+    .uf-select-wrap select:focus {
       border-color: var(--color-lula);
+      box-shadow: 0 0 0 2px var(--color-lula-soft);
     }
 
     /* Main Container Split Layout */
     main.app-main {
       flex: 1;
-      height: calc(728px - 100px - 26px);
+      min-height: 0;
+      height: auto;
       display: flex;
       position: relative;
       overflow: hidden;
@@ -1135,7 +1166,7 @@
       cursor: pointer;
     }
 
-    /* Responsive Queries */
+    /* Responsive Queries for Tablets & Mobile Devices */
     @media (max-width: 900px) {
       aside.side-panel {
         position: absolute;
@@ -1159,25 +1190,175 @@
       .mobile-drawer-toggle {
         display: flex;
       }
+    }
 
+    /* Mobile Screens & Narrow Embeds (<= 768px) */
+    @media (max-width: 768px) {
+      /* Header: Two clean rows */
+      header.app-header {
+        height: auto;
+        min-height: unset;
+        padding: 8px 12px 10px 12px;
+        flex-wrap: wrap;
+        row-gap: 8px;
+      }
+
+      .brand-section {
+        order: 1;
+        flex: 1;
+        min-width: 0;
+        gap: 8px;
+      }
+
+      .header-actions {
+        order: 2;
+        flex-shrink: 0;
+        gap: 6px;
+      }
+
+      /* Search Bar: Full 100% Width on Mobile */
       .search-wrapper {
-        max-width: 200px;
+        order: 3;
+        width: 100%;
+        max-width: 100%;
+        flex: 0 0 100%;
+        margin-top: 2px;
+      }
+
+      .search-input {
+        height: 38px;
+        font-size: 13px;
+        padding: 0 32px 0 36px;
+        border-radius: 9px;
+      }
+
+      .search-icon {
+        left: 12px;
+        width: 16px;
+        height: 16px;
+      }
+
+      .search-clear-btn {
+        right: 8px;
+        font-size: 18px;
+        width: 24px;
+        height: 24px;
+      }
+
+      .search-results-dropdown {
+        top: calc(100% + 4px);
+        max-height: 270px;
+        border-radius: 10px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+      }
+
+      .search-item {
+        padding: 10px 14px;
+        min-height: 44px;
+      }
+
+      /* Controls Bar: Mode Pills on Top, Filters (Região & UF) Below in 50%/50% Columns */
+      .controls-bar {
+        height: auto;
+        min-height: unset;
+        padding: 8px 12px;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        overflow-x: visible;
+      }
+
+      .mode-pills-group {
+        width: 100%;
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 4px;
+        padding: 3px;
+      }
+
+      .mode-pills-group::-webkit-scrollbar {
+        display: none;
+      }
+
+      .mode-pill {
+        flex-shrink: 0;
+        padding: 6px 11px;
+        font-size: 11px;
+        border-radius: 6px;
+      }
+
+      /* Region and UF Filters: Full Width, Side-by-Side */
+      .filter-pills-group {
+        width: 100%;
+        display: flex;
+        gap: 8px;
+      }
+
+      .region-select-wrap,
+      .uf-select-wrap {
+        flex: 1;
+        min-width: 0;
+        width: 50%;
+        position: relative;
+      }
+
+      .region-select-wrap select,
+      .uf-select-wrap select {
+        width: 100%;
+        height: 36px;
+        padding: 0 28px 0 12px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 8px;
+        background: var(--bg-input);
+        border: 1px solid var(--border-strong);
+      }
+
+      .region-select-wrap::after,
+      .uf-select-wrap::after {
+        right: 11px;
+        font-size: 11px;
       }
     }
 
-    @media (max-width: 600px) {
-      .header-subtitle, .badge-2026 {
+    /* Ultra-compact screens (<= 480px, e.g. iPhone SE, compact Androids) */
+    @media (max-width: 480px) {
+      .header-subtitle {
         display: none;
       }
+
       .brand-logo {
         height: 24px;
       }
-      .search-wrapper {
-        max-width: 140px;
+
+      .header-title-box h1 {
+        font-size: 12px;
       }
+
+      .badge-2026 {
+        font-size: 9px;
+        padding: 1px 4px;
+      }
+
+      .icon-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+      }
+
       .mode-pill {
-        padding: 4px 8px;
-        font-size: 10px;
+        padding: 5px 8px;
+        font-size: 10.5px;
+      }
+
+      .region-select-wrap select,
+      .uf-select-wrap select {
+        font-size: 11.5px;
+        height: 34px;
+        padding: 0 24px 0 9px;
       }
     }
   </style>
@@ -2526,6 +2707,7 @@
         citySearch.value = '';
         searchResults.style.display = 'none';
         searchClear.style.display = 'none';
+        citySearch.focus();
       });
 
       document.addEventListener('click', (e) => {
